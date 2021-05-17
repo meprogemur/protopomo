@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Vibration } from 'react-native';
 
 export default class App extends React.Component {
   constructor() {
@@ -9,7 +9,8 @@ export default class App extends React.Component {
       time: 25 * 60,
       status: 'working',
       running: false,
-      butt: 'start'
+      butt: 'start',
+      breakTime: 5 * 60
     }
   }
   
@@ -25,36 +26,47 @@ export default class App extends React.Component {
         running: true,
         butt: 'pause'
       })
-    this.id = setInterval(() => {
-      this.setState({
-        time: this.state.time - 1
-      })
-      if (this.state.time === 0 && this.state.status === 'working') {
+      this.id = setInterval(() => {
         this.setState({
-          running: false,
-          status: 'chilling',
-          time: this.state.breakTime
+          time: this.state.time - 1
         })
-        clearInterval(this.id)
-          this.timerStart()
-      }        
+        if (this.state.time === 0 && this.state.status === 'working') {
+            this.setState({
+              running: false,
+              status: 'chilling',
+              time: this.state.breakTime
+            })
+            clearInterval(this.id)
+            Vibration.vibrate([500,500,500])
+            this.timerStart()
+        }        
         else if (this.state.status === 'chilling' && this.state.time === 0) {
           clearInterval(this.id)
           this.setState({
-            time: 25 * 60,
-            butt: 'start',
-            status: 'working'
-          })
+              time: 25 * 60,
+              butt: 'start',
+              status: 'working'
+            })
         }
       }, 1000)
+    }
+    else {
+      clearInterval(this.id)
+      this.setState({
+          running: false,
+          butt: 'resume'
+        })
+    }
   }
-  else {
+
+  reset = () => {
     clearInterval(this.id)
     this.setState({
+      time: 25*60,
       running: false,
-      butt: 'resume'
+      status: 'working',
+      butt: 'start'
     })
-  }
   }
   
   handleBreakChange = (text) => {
@@ -63,11 +75,9 @@ export default class App extends React.Component {
     })
   } 
   
-
-
   pad(d) {
     return (d < 10) ? '0' + d.toString() : d.toString();
-}
+  }
 
   render() {
     return (
@@ -80,6 +90,11 @@ export default class App extends React.Component {
         <TouchableOpacity onPress={this.timerStart}>
           <Text>
             {this.state.butt}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={this.reset}>
+          <Text>
+            reset
           </Text>
         </TouchableOpacity>
         <Text>
