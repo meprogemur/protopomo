@@ -51,6 +51,13 @@ export default class App extends React.Component {
       breakTime: text * 60
     })
   }
+  
+  test = () => {
+    clearInterval(this.id)
+    this.setState({
+      running: false
+    })
+  }
 
   pad(d) {
     return (d < 10) ? '0' + d.toString() : d.toString();
@@ -67,6 +74,11 @@ export default class App extends React.Component {
         <TouchableOpacity onPress={this.timerStart}>
           <Text>
             start
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={this.test}>
+          <Text>
+            pause
           </Text>
         </TouchableOpacity>
         <Text>
