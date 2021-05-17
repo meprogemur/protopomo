@@ -7,9 +7,8 @@ export default class App extends React.Component {
     super() 
     this.state = {
       time: 25 * 60,
-      status: true,
+      status: 'working',
       running: false,
-      disStat: 'working'
     }
   }
   
@@ -28,17 +27,16 @@ export default class App extends React.Component {
       this.setState({
         time: this.state.time - 1
       })
-      if (this.state.time === 0 && this.state.status) {
+      if (this.state.time === 0 && this.state.status === 'working') {
         this.setState({
           running: false,
-          status: false,
-          disStat: 'chilling',
+          status: 'chilling',
           time: this.state.breakTime
         })
         clearInterval(this.id)
           this.timerStart()
       }        
-        else if (!this.state.status && this.state.time === 0) {
+        else if (this.state.status === 'chilling' && this.state.time === 0) {
           clearInterval(this.id)
           this.setState({
             time: 25 * 60
@@ -72,7 +70,7 @@ export default class App extends React.Component {
           </Text>
         </TouchableOpacity>
         <Text>
-          {this.state.disStat}
+          {this.state.status}
         </Text>
       </View>
     )
