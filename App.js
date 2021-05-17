@@ -9,6 +9,7 @@ export default class App extends React.Component {
       time: 25 * 60,
       status: 'working',
       running: false,
+      butt: 'start'
     }
   }
   
@@ -22,6 +23,7 @@ export default class App extends React.Component {
     if (!this.state.running){
       this.setState({
         running: true,
+        butt: 'pause'
       })
     this.id = setInterval(() => {
       this.setState({
@@ -39,10 +41,19 @@ export default class App extends React.Component {
         else if (this.state.status === 'chilling' && this.state.time === 0) {
           clearInterval(this.id)
           this.setState({
-            time: 25 * 60
+            time: 25 * 60,
+            butt: 'start',
+            status: 'working'
           })
         }
       }, 1000)
+  }
+  else {
+    clearInterval(this.id)
+    this.setState({
+      running: false,
+      butt: 'resume'
+    })
   }
   }
   
@@ -50,14 +61,9 @@ export default class App extends React.Component {
     this.setState({
       breakTime: text * 60
     })
-  }
+  } 
   
-  test = () => {
-    clearInterval(this.id)
-    this.setState({
-      running: false
-    })
-  }
+
 
   pad(d) {
     return (d < 10) ? '0' + d.toString() : d.toString();
@@ -73,12 +79,7 @@ export default class App extends React.Component {
         <TextInput keyboardType='numeric' defaultValue={'' + 5} onChangeText={this.handleBreakChange} />
         <TouchableOpacity onPress={this.timerStart}>
           <Text>
-            start
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={this.test}>
-          <Text>
-            pause
+            {this.state.butt}
           </Text>
         </TouchableOpacity>
         <Text>
